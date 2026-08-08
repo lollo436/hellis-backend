@@ -1,3 +1,86 @@
+
+<div id="pannelloChiamataHellis" style="background: #111; border: 2px solid #00ff66; padding: 15px; border-radius: 10px; text-align: center; margin: 20px auto; max-width: 500px; box-shadow: 0 0 15px rgba(0,255,102,0.3);">
+    <h3 style="color: #00ff66; margin-top: 0; font-family: monospace;">CANALE VOCALE HELLIS AI</h3>
+    <button onclick="avviaChiamata()" style="background-color: #00ff66; color: #000; border: none; padding: 12px 24px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; box-shadow: 0 0 10px rgba(0,255,102,0.5);">
+        📞 Avvia Chiamata Vocale
+    </button>
+    <p id="statoVoce" style="color: #fff; font-size: 14px; margin-top: 10px;">In attesa di istruzioni, Signore...</p>
+</div>
+
+<script>
+    const API_URL = "https://hellis-backend1.onrender.com";
+
+    function avviaChiamata() {
+        if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+            alert("Il vostro browser non supporta il riconoscimento vocale, Signore.");
+            return;
+        }
+
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = "it-IT";
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        const statoEl = document.getElementById("statoVoce");
+
+        recognition.onstart = function() {
+            if (statoEl) statoEl.innerText = "In ascolto... Parolate, Signore.";
+            parlaTesto("Linea aperta, Signore. Vi ascolto.");
+        };
+
+        recognition.onresult = function(event) {
+            const testoUtente = event.results[0][0].transcript;
+            if (statoEl) statoEl.innerText = "Comando ricevuto: " + testoUtente;
+            inviaMessaggioVocale(testoUtente);
+        };
+
+        recognition.onerror = function(event) {
+            if (statoEl) statoEl.innerText = "Errore nel riconoscimento vocale.";
+            console.error("Errore voce:", event.error);
+        };
+
+        recognition.onend = function() {
+            if (statoEl && statoEl.innerText.includes("In ascolto")) {
+                statoEl.innerText = "Chiamata terminata.";
+            }
+        };
+
+        recognition.start();
+    }
+
+    function parlaTesto(testo) {
+        if ("speechSynthesis" in window) {
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(testo);
+            utterance.lang = "it-IT";
+            utterance.rate = 1.0;
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    async function inviaMessaggioVocale(testo) {
+        try {
+            const res = await fetch(`${API_URL}/api/v1/chat/privata`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: testo })
+            });
+            const data = await res.json();
+            if (data.response) {
+                const statoEl = document.getElementById("statoVoce");
+                if (statoEl) statoEl.innerText = "Hellis: " + data.response;
+                parlaTesto(data.response);
+            }
+        } else {
+            console.error("Errore di comunicazione con il server.");
+        }
+        } catch (err) {
+            console.error("Errore:", err);
+        }
+    }
+</script>
+
 <!DOCTYPE html>
 <html lang="it">
 <head>
