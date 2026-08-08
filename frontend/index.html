@@ -59,7 +59,7 @@
                     🎙️
                 </button>
 
-                <textarea id="user-input" rows="1" placeholder="Scrivi un messaggio a Ultron, allega un file o usa la voce..." class="flex-1 bg-transparent text-slate-100 placeholder-slate-500 px-3 py-2 resize-none outline-none max-h-32"></textarea>
+                <textarea id="user-input" rows="1" placeholder="Scrivi un messaggio a Hellis AI, allega un file o usa la voce..." class="flex-1 bg-transparent text-slate-100 placeholder-slate-500 px-3 py-2 resize-none outline-none max-h-32"></textarea>
                 
                 <button onclick="inviaMessaggio()" class="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-medium px-5 py-2.5 rounded-xl shadow-lg transition-all">
                     Invia
@@ -140,7 +140,7 @@
                     chatAttiva = data.chat_name;
                     aggiungiMessaggioUI("Hellis", data.response, false);
                 } else {
-                    aggiungiMessaggioUI("Hellis", "Errore di risposta da Ultron.", false);
+                    aggiungiMessaggioUI("Hellis", "Errore di risposta da Hellis AI.", false);
                 }
             } catch (e) {
                 aggiungiMessaggioUI("Hellis", "Errore di connessione al server.", false);
@@ -178,5 +178,42 @@
             `;
         }
     </script>
+
+    <script>
+        let inChiamata = false;
+        let recognition = null;
+        const API_URL = "https://hellis-backend1.onrender.com";
+
+        function avviaChiamata() {
+            if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
+                alert("Il browser non supporta il riconoscimento vocale, Signore.");
+                return;
+            }
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = "it-IT";
+            
+            recognition.onstart = () => { parlaTesto("Linea aperta, Signore."); };
+            recognition.onresult = (event) => { inviaMessaggioVocale(event.results[0][0].transcript); };
+            recognition.start();
+        }
+
+        function parlaTesto(testo) {
+            const utterance = new SpeechSynthesisUtterance(testo);
+            utterance.lang = "it-IT";
+            window.speechSynthesis.speak(utterance);
+        }
+
+        async function inviaMessaggioVocale(testo) {
+            const res = await fetch(`${API_URL}/api/v1/chat/privata`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: testo })
+            });
+            const data = await res.json();
+            if (data.response) parlaTesto(data.response);
+        }
+    </script>
+    
 </body>
 </html>
