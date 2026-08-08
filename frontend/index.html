@@ -51,6 +51,19 @@
             color: #b4b4b4;
             padding: 5px 0;
         }
+        .history-item {
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px;
+        }
+        .history-item:hover {
+            background-color: #212121;
+            color: #ececec;
+        }
         .sidebar-footer {
             border-top: 1px solid #2f2f2f;
             padding-top: 10px;
@@ -113,6 +126,21 @@
             flex-direction: column;
             align-items: center;
             padding-bottom: 120px;
+        }
+        /* Schermata iniziale in stile ChatGPT */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            gap: 20px;
+        }
+        .welcome-screen h2 {
+            font-size: 28px;
+            font-weight: 600;
+            color: #ececec;
         }
         .message-row {
             width: 100%;
@@ -234,8 +262,10 @@
 <body>
 
     <div class="sidebar">
-        <button class="new-chat-btn" onclick="location.reload()">+ Nuova chat</button>
-        <div class="sidebar-history"></div>
+        <button class="new-chat-btn" onclick="nuovaChat()">+ Nuova chat</button>
+        <div class="sidebar-history" id="sidebarHistory">
+            <!-- Cronologia dinamica -->
+        </div>
         <div class="sidebar-footer">
             <div class="avatar user" style="width: 24px; height: 24px; font-size: 10px;">L</div>
             <span>Lorenzo (Signore)</span>
@@ -254,11 +284,8 @@
         </div>
 
         <div id="chatContainer" class="chat-container">
-            <div class="message-row ai">
-                <div class="message-content">
-                    <div class="avatar ai">H</div>
-                    <div class="text">Sistemi operativi attivi, Signore. Cronologia ripulita, tutto pronto per voi.</div>
-                </div>
+            <div class="welcome-screen" id="welcomeScreen">
+                <h2>Come posso aiutarti, Signore?</h2>
             </div>
         </div>
 
@@ -275,9 +302,39 @@
 
     <script>
         const API_URL = "https://hellis-backend1.onrender.com";
+        let chatIniziata = false;
+        let cronologiaChat = JSON.parse(localStorage.getItem("hellis_cronologia")) || [];
+
+        function aggiornaSidebar() {
+            const historyDiv = document.getElementById("sidebarHistory");
+            historyDiv.innerHTML = "";
+            cronologiaChat.forEach((chat, index) => {
+                const item = document.createElement("div");
+                item.className = "history-item";
+                item.innerText = chat.titolo;
+                item.onclick = () => caricaChat(index);
+                historyDiv.appendChild(item);
+            });
+        }
+
+        function nuovaChat() {
+            chatIniziata = false;
+            const container = document.getElementById("chatContainer");
+            container.innerHTML = `
+                <div class="welcome-screen" id="welcomeScreen">
+                    <h2>Come posso aiutarti, Signore?</h2>
+                </div>
+            `;
+        }
 
         function aggiungiMessaggio(testo, mittente) {
             const container = document.getElementById("chatContainer");
+            const welcome = document.getElementById("welcomeScreen");
+            if (welcome) {
+                welcome.remove();
+                chatIniziata = true;
+            }
+
             const row = document.createElement("div");
             row.className = `message-row ${mittente}`;
 
@@ -299,10 +356,19 @@
             container.scrollTop = container.scrollHeight;
         }
 
+        function salvaInCronologia(primoMessaggio) {
+            if (cronologiaChat.length === 0 || cronologiaChat[0].titolo !== primoMessaggio) {
+                cronologiaChat.unshift({ titolo: primoMessaggio, data: new Date().toISOString() });
+                localStorage.setItem("hellis_cronologia", JSON.stringify(cronologiaChat));
+                aggiornaSidebar();
+            }
+        }
+
         function gestisciFile(input) {
             if (input.files && input.files[0]) {
                 const file = input.files[0];
                 aggiungiMessaggio(`[File allegato: ${file.name}]`, "user");
+                salvaInCronologia(`Allegato: ${file.name}`);
                 inviaFileAlServer(file);
             }
         }
@@ -367,6 +433,7 @@
             recognition.onresult = function(event) {
                 const testoUtente = event.results[0][0].transcript;
                 statoEl.innerText = "• Elaborazione...";
+                salvaInCronologia(testoUtente);
                 aggiungiMessaggio(testoUtente, "user");
                 inviaAlServer(testoUtente, true);
             };
@@ -394,6 +461,10 @@
             const textarea = document.getElementById("userInput");
             const testo = textarea.value.trim();
             if (!testo) return;
+
+            if (!chatIniziata) {
+                salvaInCronologia(testo);
+            }
 
             aggiungiMessaggio(testo, "user");
             textarea.value = "";
@@ -430,6 +501,9 @@
                 if (vocale) parlaTesto(errMsg);
             }
         }
+
+        // Inizializza la sidebar al caricamento
+        aggiornaSidebar();
     </script>
 </body>
 </html>
