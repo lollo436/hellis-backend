@@ -51,18 +51,6 @@
             color: #b4b4b4;
             padding: 5px 0;
         }
-        .sidebar-history div {
-            padding: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .sidebar-history div:hover {
-            background-color: #212121;
-            color: #ececec;
-        }
         .sidebar-footer {
             border-top: 1px solid #2f2f2f;
             padding-top: 10px;
@@ -131,7 +119,7 @@
             display: flex;
             justify-content: center;
             padding: 24px 20px;
-            border-bottom: 1px solid #2f2f2f; /* Bordo attorno ad ogni messaggio come ChatGPT */
+            border-bottom: 1px solid #2f2f2f;
         }
         .message-row.ai {
             background-color: #2f2f2f;
@@ -247,11 +235,7 @@
 
     <div class="sidebar">
         <button class="new-chat-btn" onclick="location.reload()">+ Nuova chat</button>
-        <div class="sidebar-history">
-            <div style="font-weight: bold; color: #ececec; margin-bottom: 5px;">Cronologia</div>
-            <div>Hellis AI Attiva</div>
-            <div>Sessione Privata</div>
-        </div>
+        <div class="sidebar-history"></div>
         <div class="sidebar-footer">
             <div class="avatar user" style="width: 24px; height: 24px; font-size: 10px;">L</div>
             <span>Lorenzo (Signore)</span>
@@ -273,7 +257,7 @@
             <div class="message-row ai">
                 <div class="message-content">
                     <div class="avatar ai">H</div>
-                    <div class="text">Sistemi operativi attivi, Signore. Ogni messaggio ha ora il suo bordo dedicato in perfetto stile ChatGPT.</div>
+                    <div class="text">Sistemi operativi attivi, Signore. Cronologia ripulita, tutto pronto per voi.</div>
                 </div>
             </div>
         </div>
