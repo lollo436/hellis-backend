@@ -13,7 +13,7 @@
         }
         body {
             background-color: #212121;
-            color: #ececec;
+            color: #ffffff;
             display: flex;
             height: 100vh;
             overflow: hidden;
@@ -28,13 +28,14 @@
         }
         .new-chat-btn {
             background: transparent;
-            color: #ececec;
+            color: #ffffff;
             border: 1px solid #424242;
             padding: 10px;
             border-radius: 12px;
             text-align: left;
             cursor: pointer;
             font-size: 14px;
+            font-weight: 500;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -48,7 +49,7 @@
             flex-grow: 1;
             overflow-y: auto;
             font-size: 13px;
-            color: #b4b4b4;
+            color: #d1d5db;
             padding: 5px 0;
         }
         .history-item {
@@ -59,16 +60,16 @@
             overflow: hidden;
             text-overflow: ellipsis;
             margin-bottom: 4px;
+            color: #ffffff;
         }
         .history-item:hover {
             background-color: #212121;
-            color: #ececec;
         }
         .sidebar-footer {
             border-top: 1px solid #2f2f2f;
             padding-top: 10px;
             font-size: 13px;
-            color: #8e8ea0;
+            color: #d1d5db;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -92,18 +93,18 @@
         .model-title {
             font-weight: 600;
             font-size: 16px;
-            color: #ececec;
+            color: #ffffff;
             display: flex;
             align-items: center;
             gap: 8px;
         }
         .btn-call {
             background-color: #10a37f;
-            color: #fff;
+            color: #ffffff;
             border: none;
             padding: 8px 16px;
             font-size: 14px;
-            font-weight: 500;
+            font-weight: 600;
             border-radius: 20px;
             cursor: pointer;
             display: flex;
@@ -116,8 +117,9 @@
         }
         #statoVoce {
             font-size: 12px;
-            color: #10a37f;
+            color: #34d399;
             margin-left: 10px;
+            font-weight: 500;
         }
         .chat-container {
             flex-grow: 1;
@@ -127,7 +129,6 @@
             align-items: center;
             padding-bottom: 120px;
         }
-        /* Schermata iniziale in stile ChatGPT */
         .welcome-screen {
             display: flex;
             flex-direction: column;
@@ -138,9 +139,9 @@
             gap: 20px;
         }
         .welcome-screen h2 {
-            font-size: 28px;
-            font-weight: 600;
-            color: #ececec;
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffffff;
         }
         .message-row {
             width: 100%;
@@ -150,7 +151,7 @@
             border-bottom: 1px solid #2f2f2f;
         }
         .message-row.ai {
-            background-color: #2f2f2f;
+            background-color: #2a2a2a;
         }
         .message-content {
             width: 100%;
@@ -159,6 +160,7 @@
             gap: 16px;
             font-size: 15px;
             line-height: 1.6;
+            color: #ffffff;
         }
         .avatar {
             width: 32px;
@@ -170,10 +172,10 @@
             font-weight: bold;
             font-size: 12px;
             flex-shrink: 0;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
         .avatar.user {
-            background-color: #5436da;
+            background-color: #6366f1;
             color: white;
         }
         .avatar.ai {
@@ -184,13 +186,14 @@
             flex-grow: 1;
             white-space: pre-wrap;
             word-break: break-word;
+            color: #ffffff;
         }
         .input-container {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: linear-gradient(180deg, rgba(33,33,33,0) 0%, rgba(33,33,33,0.9) 50%, #212121 100%);
+            background: linear-gradient(180deg, rgba(33,33,33,0) 0%, rgba(33,33,33,0.95) 50%, #212121 100%);
             padding: 20px;
             display: flex;
             justify-content: center;
@@ -199,19 +202,19 @@
             width: 100%;
             max-width: 768px;
             background-color: #2f2f2f;
-            border: 1px solid #424242;
+            border: 1px solid #4f4f4f;
             border-radius: 24px;
             padding: 10px 16px;
             display: flex;
             align-items: flex-end;
             gap: 10px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
         textarea {
             flex-grow: 1;
             background: transparent;
             border: none;
-            color: #ececec;
+            color: #ffffff;
             font-size: 15px;
             resize: none;
             outline: none;
@@ -220,12 +223,12 @@
             padding-bottom: 4px;
         }
         textarea::placeholder {
-            color: #8e8ea0;
+            color: #9ca3af;
         }
         .attach-btn {
             background: transparent;
             border: none;
-            color: #b4b4b4;
+            color: #d1d5db;
             cursor: pointer;
             font-size: 20px;
             padding: 4px 8px;
@@ -236,11 +239,11 @@
             transition: color 0.2s, background 0.2s;
         }
         .attach-btn:hover {
-            color: #ececec;
-            background-color: #3e3e3e;
+            color: #ffffff;
+            background-color: #3f3f3f;
         }
         .send-btn {
-            background-color: #ececec;
+            background-color: #ffffff;
             color: #212121;
             border: none;
             width: 32px;
@@ -255,7 +258,7 @@
             flex-shrink: 0;
         }
         .send-btn:hover {
-            background-color: #ffffff;
+            background-color: #e5e7eb;
         }
     </style>
 </head>
@@ -263,9 +266,7 @@
 
     <div class="sidebar">
         <button class="new-chat-btn" onclick="nuovaChat()">+ Nuova chat</button>
-        <div class="sidebar-history" id="sidebarHistory">
-            <!-- Cronologia dinamica -->
-        </div>
+        <div class="sidebar-history" id="sidebarHistory"></div>
         <div class="sidebar-footer">
             <div class="avatar user" style="width: 24px; height: 24px; font-size: 10px;">L</div>
             <span>Lorenzo (Signore)</span>
@@ -275,7 +276,7 @@
     <div class="main-content">
         <div class="top-bar">
             <div class="model-title">
-                Hellis AI <span style="color: #8e8ea0; font-weight: normal; font-size: 14px;">▼</span>
+                Hellis AI <span style="color: #9ca3af; font-weight: normal; font-size: 14px;">▼</span>
                 <span id="statoVoce"></span>
             </div>
             <button class="btn-call" onclick="avviaChiamata()">
@@ -502,7 +503,6 @@
             }
         }
 
-        // Inizializza la sidebar al caricamento
         aggiornaSidebar();
     </script>
 </body>
