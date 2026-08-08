@@ -31,7 +31,7 @@
             color: #ececec;
             border: 1px solid #424242;
             padding: 10px;
-            border-radius: 6px;
+            border-radius: 12px;
             text-align: left;
             cursor: pointer;
             font-size: 14px;
@@ -53,7 +53,7 @@
         }
         .sidebar-history div {
             padding: 10px;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
             white-space: nowrap;
             overflow: hidden;
@@ -103,7 +103,7 @@
             padding: 8px 16px;
             font-size: 14px;
             font-weight: 500;
-            border-radius: 6px;
+            border-radius: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -147,9 +147,9 @@
             line-height: 1.6;
         }
         .avatar {
-            width: 30px;
-            height: 30px;
-            border-radius: 2px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -185,8 +185,8 @@
             max-width: 768px;
             background-color: #2f2f2f;
             border: 1px solid #424242;
-            border-radius: 12px;
-            padding: 10px 14px;
+            border-radius: 24px;
+            padding: 10px 16px;
             display: flex;
             align-items: flex-end;
             gap: 10px;
@@ -213,15 +213,16 @@
             color: #b4b4b4;
             cursor: pointer;
             font-size: 20px;
-            padding: 2px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: color 0.2s;
+            transition: color 0.2s, background 0.2s;
         }
         .attach-btn:hover {
             color: #ececec;
+            background-color: #3e3e3e;
         }
         .send-btn {
             background-color: #ececec;
@@ -229,7 +230,7 @@
             border: none;
             width: 32px;
             height: 32px;
-            border-radius: 6px;
+            border-radius: 50%;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -273,14 +274,13 @@
             <div class="message-row ai">
                 <div class="message-content">
                     <div class="avatar ai">H</div>
-                    <div class="text">Sistemi operativi attivi, Signore. Hellis AI è online e pronto a servirvi. Potete scrivermi, parlarmi o allegare foto e documenti.</div>
+                    <div class="text">Sistemi operativi attivi, Signore. Hellis AI è online e pronto a servirvi con interfacce completamente circolari e morbide.</div>
                 </div>
             </div>
         </div>
 
         <div class="input-container">
             <div class="input-box-wrapper">
-                <!-- Input file nascosto per foto e documenti -->
                 <input type="file" id="fileInput" style="display: none;" onchange="gestisciFile(this)">
                 <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Allega foto o documento">📎</button>
                 
