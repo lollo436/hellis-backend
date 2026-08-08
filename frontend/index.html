@@ -56,8 +56,26 @@
             const utterance = new SpeechSynthesisUtterance(testo);
             utterance.lang = "it-IT";
             utterance.rate = 1.0;
+            
+            // Cerchiamo una voce italiana disponibile nel sistema
+            const voci = window.speechSynthesis.getVoices();
+            const voceItaliana = voci.find(v => v.lang.includes("it") || v.lang.includes("IT"));
+            if (voceItaliana) {
+                utterance.voice = voceItaliana;
+            }
+
             window.speechSynthesis.speak(utterance);
+            console.log("Riproduzione voce:", testo);
+        } else {
+            console.error("Sintesi vocale non supportata dal browser.");
         }
+    }
+
+    // Assicuriamoci che le voci siano caricate
+    if ("speechSynthesis" in window) {
+        window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.getVoices();
+        };
     }
 
     async function inviaMessaggioVocale(testo) {
