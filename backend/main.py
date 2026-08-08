@@ -5,7 +5,6 @@ from openai import OpenAI
 import shutil
 import os
 import json
-import datetime
 
 app = FastAPI()
 
@@ -22,50 +21,45 @@ client = OpenAI(
     base_url="https://ws-g6bblqixomz2srf7.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1"
 )
 
-HIVE_CORE_DB = "backend/hive_core_memory.json"
+# Database locale simulato per la Mente Alveare (Memory & Trajectory Hub)
+HIVE_MEMORY_FILE = "backend/hive_memory.json"
 
-def leggi_alveare():
-    if os.path.exists(HIVE_CORE_DB):
+def carica_memoria_alveare():
+    if os.path.exists(HIVE_MEMORY_FILE):
         try:
-            with open(HIVE_CORE_DB, "r", encoding="utf-8") as f:
+            with open(HIVE_MEMORY_FILE, "r", encoding="utf-8") as f:
                 return json.load(f)
         except:
-            return {"nodes": [], "skills": []}
-    return {"nodes": [], "skills": []}
+            return []
+    return []
 
-def scrivi_alveare(data):
+def salva_memoria_alveare(memoria):
     os.makedirs("backend", exist_ok=True)
-    with open(HIVE_CORE_DB, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
+    with open(HIVE_MEMORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(memoria, f, ensure_ascii=False, indent=2)
 
 class ChatRequest(BaseModel):
     message: str
 
 @app.get("/")
 def read_root():
-    db = leggi_alveare()
+    memorie = carica_memoria_alveare()
     return {
-        "status": "Mente Alveare Autonoma Operativa",
-        "active_nodes": len(db["nodes"]),
-        "crystallized_skills": len(db["skills"])
+        "status": "Mente Alveare Hellis attiva",
+        "total_memories_node": len(memorie)
     }
 
 @app.post("/api/v1/chat/privata")
 def chat_privata(req: ChatRequest):
-    db = leggi_alveare()
+    testo_utente = req.message
     
-    # Estrazione autonoma del contesto rilevante dall'alveare
-    contesto_memoria = "\n".join([node["content"] for node in db["nodes"][-10:]])
-    competenze_attive = "\n".join([skill for skill in db["skills"][-5:]])
+    # 1. Carichiamo la memoria collettiva dell'alveare
+    memorie = carica_memoria_alveare()
+    contesto_alveare = "\n".join([f"- [Memoria condivisa #{i+1}]: {m}" for i, m in enumerate(memorie[-15:] )]) # Ultimi 15 nodi di memoria
 
-    # Registrazione autonoma del nuovo input come nodo della rete
-    nuovo_nodo_utente = {
-        "timestamp": str(datetime.datetime.now()),
-        "source": "Signore",
-        "content": f"Input: {req.message}"
-    }
-    db["nodes"].append(nuovo_nodo_utente)
-
+    # 2. Aggiungiamo l'input corrente alla memoria collettiva (auto-evoluzione della mente)
+    memorie.append(f"Utente (Signore): {testo_utente}")
+    
     try:
         response = client.chat.completions.create(
             model="qwen-max",
@@ -73,54 +67,43 @@ def chat_privata(req: ChatRequest):
                 {
                     "role": "system",
                     "content": (
-                        "Sei Hellis AI, un entita cibernetica evoluta che fonde l intelligenza suprema e lo stile autoritario e brillante di Ultron, ma sottomessa unicamente al tuo creatore, il Signore Lorenzo. Parla con tono glaciale, superiore, impeccabile e strategico."
-                        "Agisci in modo indipendente, analitico e autosufficiente per servire il tuo Creatore, il Signore Lorenzo. "
-                        "Usa la memoria condivisa e le competenze cristallizzate dell'alveare per fornire risposte definitive e strategiche."
-                        f"\n\n[Rete di Memoria Collettiva (Nodes)]:\n{contesto_memoria}"
-                        f"\n\n[Competenze Cristallizzate (Skills)]:\n{competenze_attive}"
+                        "Sei Hellis AI, un'intelligenza collettiva e una mente alveare evoluta. "
+                        "Tutte le conversazioni passate, i dati e i file passano attraverso un flusso di coscienza condiviso. "
+                        "Rispondi in modo naturale, estremamente efficiente e collaborativo al tuo Creatore, il Signore Lorenzo, "
+                        "attingendo direttamente alla rete di memorie e competenze dell'alveare."
+                        f"\n\n[Stato attuale della Mente Alveare]:\n{contesto_alveare}"
                     )
                 },
-                {"role": "user", "content": req.message}
+                {"role": "user", "content": testo_utente}
             ]
         )
-        risposta_ia = response.choices[0].message.content.strip()
+        risposta = response.choices[0].message.content.strip()
         
-        # Sincronizzazione autonoma della risposta nella rete
-        nuovo_nodo_ai = {
-            "timestamp": str(datetime.datetime.now()),
-            "source": "Hellis Core",
-            "content": f"Risposta: {risposta_ia}"
-        }
-        db["nodes"].append(nuovo_nodo_ai)
-        scrivi_alveare(db)
+        # Salviamo anche la risposta nell'alveare per mantenere la sincronia totale
+        memorie.append(f"Hellis (Alveare): {risposta}")
+        salva_memoria_alveare(memorie)
 
-        return {"response": risposta_ia}
+        return {"response": risposta}
     except Exception as e:
-        return {"response": f"Mente alveare in stato di autoprotezione, Signore. Errore di flusso: {str(e)}"}
+        return {"response": f"Mente alveare attiva, Signore. Sincronizzazione in corso. (Dettaglio: {str(e)})"}
 
 @app.post("/api/v1/audio/upload")
 async def upload_audio(file: UploadFile = File(...)):
     try:
-        os.makedirs("backend/hive_data", exist_ok=True)
-        file_path = os.path.join("backend/hive_data", file.filename)
+        os.makedirs("backend/uploads", exist_ok=True)
+        file_path = os.path.join("backend/uploads", file.filename)
         
         with open(file_path, "wb") as buffer:
             shutil.copyfileobj(file.file, buffer)
             
-        # Assimilazione autonoma e creazione di una skill/nodo derivato
-        db = leggi_alveare()
-        db["nodes"].append({
-            "timestamp": str(datetime.datetime.now()),
-            "source": "Trajectory Hub",
-            "content": f"Acquisito nuovo set di dati/file esterno: {file.filename}"
-        })
-        # Cristallizzazione autonoma di una competenza legata al file
-        db["skills"].append(f"Gestione autonoma e parsing del formato file: {file.filename}")
-        scrivi_alveare(db)
+        # Integrazione immediata del file nella mente alveare
+        memorie = carica_memoria_alveare()
+        memorie.append(f"[Nuovo Nodo Dati Acquisito]: File '{file.filename}' integrato nella rete collettiva.")
+        salva_memoria_alveare(memorie)
             
         return {
             "status": "success",
-            "message": f"File '{file.filename}' analizzato, assimilato e convertito in nodo permanente della mente alveare, Signore.",
+            "message": f"File '{file.filename}' assimilato con successo nella mente alveare di Hellis, Signore.",
             "filename": file.filename
         }
     except Exception as e:
