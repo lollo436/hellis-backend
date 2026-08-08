@@ -8,11 +8,12 @@
 </div>
 
 <script>
-    const API_URL = "https://hellis-backend1.onrender.com";
+    const API_URL_VOICE = "https://hellis-backend1.onrender.com";
 
     function avviaChiamata() {
+        const statoEl = document.getElementById("statoVoce");
         if (!("webkitSpeechRecognition" in window) && !("SpeechRecognition" in window)) {
-            alert("Il vostro browser non supporta il riconoscimento vocale, Signore.");
+            alert("Il vostro browser non supporta il riconoscimento vocale, Signore. Usate Google Chrome.");
             return;
         }
 
@@ -22,8 +23,6 @@
         recognition.continuous = false;
         recognition.interimResults = false;
 
-        const statoEl = document.getElementById("statoVoce");
-
         recognition.onstart = function() {
             if (statoEl) statoEl.innerText = "In ascolto... Parolate, Signore.";
             parlaTesto("Linea aperta, Signore. Vi ascolto.");
@@ -31,22 +30,24 @@
 
         recognition.onresult = function(event) {
             const testoUtente = event.results[0][0].transcript;
-            if (statoEl) statoEl.innerText = "Comando ricevuto: " + testoUtente;
+            if (statoEl) statoEl.innerText = "Comando: " + testoUtente;
             inviaMessaggioVocale(testoUtente);
         };
 
         recognition.onerror = function(event) {
-            if (statoEl) statoEl.innerText = "Errore nel riconoscimento vocale.";
+            if (statoEl) statoEl.innerText = "Errore voce: " + event.error;
             console.error("Errore voce:", event.error);
         };
 
         recognition.onend = function() {
-            if (statoEl && statoEl.innerText.includes("In ascolto")) {
-                statoEl.innerText = "Chiamata terminata.";
-            }
+            console.log("Riconoscimento vocale terminato.");
         };
 
-        recognition.start();
+        try {
+            recognition.start();
+        } catch (e) {
+            console.error("Errore avvio riconoscimento:", e);
+        }
     }
 
     function parlaTesto(testo) {
@@ -61,7 +62,7 @@
 
     async function inviaMessaggioVocale(testo) {
         try {
-            const res = await fetch(`${API_URL}/api/v1/chat/privata`, {
+            const res = await fetch(`${API_URL_VOICE}/api/v1/chat/privata`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ message: testo })
@@ -72,14 +73,14 @@
                 if (statoEl) statoEl.innerText = "Hellis: " + data.response;
                 parlaTesto(data.response);
             }
-        } else {
-            console.error("Errore di comunicazione con il server.");
-        }
         } catch (err) {
-            console.error("Errore:", err);
+            console.error("Errore di comunicazione:", err);
         }
     }
 </script>
+
+
+
 
 <!DOCTYPE html>
 <html lang="it">
